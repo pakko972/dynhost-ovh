@@ -3,12 +3,12 @@
 #
 # CONFIG
 #
+set -e
 
-HOST=DOMAINE_NAME
-LOGIN=LOGIN
-PASSWORD=PASSWORD
+HOST=${DYNHOST_HOST}
+LOGIN=${DYNHOST_LOGIN}
+PASSWORD=${DYNHOST_PASS}
 
-PATH_LOG=/var/log/dynhost
 CURRENT_DATE=`date`
 
 #
@@ -23,16 +23,16 @@ CURRENT_IP=`curl -4 ifconfig.co`
 #
 if [ -z $CURRENT_IP ] || [ -z $HOST_IP ]
 then
-        echo "No IP retrieved" >> $PATH_LOG
+  echo "No IP retrieved"
 else
-        if [ "$HOST_IP" != "$CURRENT_IP" ]
-        then
-                echo "$CURRENT_DATE"": Current IP:" "$CURRENT_IP" "and" "host IP:" "$HOST_IP" "   IP has changed!" >> $PATH_LOG
-                RES=`curl --user "$LOGIN:$PASSWORD" "https://www.ovh.com/nic/update?system=dyndns&hostname=$HOST&myip=$CURRENT_IP"`
-                echo "Result request dynHost:" >> $PATH_LOG
-                echo "$RES" >> $PATH_LOG
-        else
-                echo "$CURRENT_DATE"": Current IP:" "$CURRENT_IP" "and" "Host IP:" "$HOST_IP" "   IP has not changed" >> $PATH_LOG
-        fi
+  if [ "$HOST_IP" != "$CURRENT_IP" ]
+  then
+    echo "$CURRENT_DATE"": Current IP:" "$CURRENT_IP" "and" "host IP:" "$HOST_IP" "   IP has changed!"
+    RES=`curl --user "$LOGIN:$PASSWORD" "https://www.ovh.com/nic/update?system=dyndns&hostname=$HOST&myip=$CURRENT_IP"`
+    echo "Result request dynHost:"
+    echo "$RES"
+  else
+    echo "$CURRENT_DATE"": Current IP:" "$CURRENT_IP" "and" "Host IP:" "$HOST_IP" "   IP has not changed"
+  fi
 fi
 
